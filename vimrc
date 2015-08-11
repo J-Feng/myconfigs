@@ -39,83 +39,83 @@
 " get platform
 "--------------------------------------
 function! MySys()
-	if  has("win16") || has("win32")     || has("win64") || 
-	  \ has("win95") || has("win32unix")
-		return "windows"
-	else
-		return "linux"
-	endif
+    if  has("win16") || has("win32")     || has("win64") ||
+      \ has("win95") || has("win32unix")
+        return "windows"
+    else
+        return "linux"
+    endif
 endfunction
 
 "--------------------------------------
 " Generate cscope database
 "--------------------------------------
 function! Do_cs()
-	"let dir = getcwd()
-	if has("cscope")
-		silent! execute "cs kill -1"
-	endif
-	if MySys() == 'windows'
-		silent! execute "!dir /s/b *.c,*.cpp,*.h >> cscope.files"
-	elseif MySys() == 'linux'
-		silent! execute "!find . -name '*.h' -o -name '*.c' -o -name '*.cpp' > cscope.files"
-	endif
-	silent! execute "!cscope -b"
-	execute "normal :"
-	if filereadable("cscope.out")
-		execute "cs add cscope.out"
-		execute "cs show"
-	endif
+    "let dir = getcwd()
+    if has("cscope")
+        silent! execute "cs kill -1"
+    endif
+    if MySys() == 'windows'
+        silent! execute "!dir /s/b *.c,*.cpp,*.h >> cscope.files"
+    elseif MySys() == 'linux'
+        silent! execute "!find . -name '*.h' -o -name '*.c' -o -name '*.cpp' > cscope.files"
+    endif
+    silent! execute "!cscope -b"
+    execute "normal :"
+    if filereadable("cscope.out")
+        execute "cs add cscope.out"
+        execute "cs show"
+    endif
 endfunction
 
 function! Do_g_cs()
-	if has("cscope")
-		silent! execute "cs kill -1"
-	endif
-	if MySys() == 'linux'
-		silent! execute "!find /usr/include /usr/local/include 
-					\ -name '*.h' -o -name '*.c' -o -name '*.cpp'
-					\ > ~/.vim/tags/commoncscope.files"
-	endif
-	silent! execute "!cscope -b -i/home/fengjie/.vim/tags/commoncscope.files
-				\ -f/home/fengjie/.vim/tags/commoncscope.out"
-	execute "normal :"
-	if filereadable("/home/fengjie/.vim/tags/commoncscope.out")
-		execute "cs add /home/fengjie/.vim/tags/commoncscope.out"
-	endif
-	if filereadable("cscope.out")
-		execute "cs add cscope.out"
-	endif
-	execute "cs show"
+    if has("cscope")
+        silent! execute "cs kill -1"
+    endif
+    if MySys() == 'linux'
+        silent! execute "!find /usr/include /usr/local/include
+                    \ -name '*.h' -o -name '*.c' -o -name '*.cpp'
+                    \ > ~/.vim/tags/commoncscope.files"
+    endif
+    silent! execute "!cscope -b -i/home/fengjie/.vim/tags/commoncscope.files
+                \ -f/home/fengjie/.vim/tags/commoncscope.out"
+    execute "normal :"
+    if filereadable("/home/fengjie/.vim/tags/commoncscope.out")
+        execute "cs add /home/fengjie/.vim/tags/commoncscope.out"
+    endif
+    if filereadable("cscope.out")
+        execute "cs add cscope.out"
+    endif
+    execute "cs show"
 endfunction
 
 "--------------------------------------
 " TODO
 "--------------------------------------
 function! SwitchToBuf(filename)
-	"let fullfn = substitute(a:filename, "^\\~/", $HOME . "/", "")
-	" find in current tab
-	let bufwinnr = bufwinnr(a:filename)
-	if bufwinnr != -1
-		exec bufwinnr . "wincmd w"
-		return
-	else
-		" find in each tab
-		tabfirst
-		let tab = 1
-		while tab <= tabpagenr("$")
-			let bufwinnr = bufwinnr(a:filename)
-			if bufwinnr != -1
-				exec "normal " . tab . "gt"
-				exec bufwinnr . "wincmd w"
-				return
-			endif
-			tabnext
-			let tab = tab + 1
-		endwhile
-		" not exist, new tab
-		exec "tabnew " . a:filename
-	endif
+    "let fullfn = substitute(a:filename, "^\\~/", $HOME . "/", "")
+    " find in current tab
+    let bufwinnr = bufwinnr(a:filename)
+    if bufwinnr != -1
+        exec bufwinnr . "wincmd w"
+        return
+    else
+        " find in each tab
+        tabfirst
+        let tab = 1
+        while tab <= tabpagenr("$")
+            let bufwinnr = bufwinnr(a:filename)
+            if bufwinnr != -1
+                exec "normal " . tab . "gt"
+                exec bufwinnr . "wincmd w"
+                return
+            endif
+            tabnext
+            let tab = tab + 1
+        endwhile
+        " not exist, new tab
+        exec "tabnew " . a:filename
+    endif
 endfunction
 
 "===============================================================================
@@ -147,22 +147,22 @@ set autowrite
 "set modeline
 
 if MySys() == 'windows'
-	runtime mswin.vim
-	" Fast editing of _vimrc
-	map <silent> <leader>ee :e! $vim\_vimrc<CR>
-	" Fast reloading of _vimrc
-	map <silent> <leader>ss :source $vim\_vimrc<CR>
-	" Reload _vimrc when it is edited
-	autocmd! bufwritepost _vimrc source $vim\_vimrc
-	set dictionary=$vim\vimfiles\dict\en.list 
+    "runtime mswin.vim
+    " Fast editing of _vimrc
+    map <silent> <leader>ee :e! $vim\_vimrc<CR>
+    " Fast reloading of _vimrc
+    map <silent> <leader>ss :source $vim\_vimrc<CR>
+    " Reload _vimrc when it is edited
+    autocmd! bufwritepost _vimrc source $vim\_vimrc
+    set dictionary=$vim\vimfiles\dict\en.list
 elseif MySys() == 'linux'
-	" Fast editing of .vimrc
-	map <silent> <leader>ee :e! ~/.vimrc<CR>
-	" Fast reloading of _vimrc
-	map <silent> <leader>ss :source ~/.vimrc<CR>
-	" Reload _vimrc when it is edited
-	autocmd! bufwritepost .vimrc source ~/.vimrc
-	set dictionary=~/.vim/dict/en.list
+    " Fast editing of .vimrc
+    map <silent> <leader>ee :e! ~/.vimrc<CR>
+    " Fast reloading of _vimrc
+    map <silent> <leader>ss :source ~/.vimrc<CR>
+    " Reload _vimrc when it is edited
+    autocmd! bufwritepost .vimrc source ~/.vimrc
+    set dictionary=~/.vim/dict/en.list
 endif
 
 
@@ -198,7 +198,7 @@ set smarttab
 set shiftwidth=4   " If smarttab is set, tab at the head of a line will insert shiftwidth, other place use tabstop or softtabstop
 set softtabstop=4  " In my vim, a tab is 8 whitespace,  and back space can delete a tab(8 whitespace together)
 set tabstop=4      " In other editor, tab is 8 whitespace  XXX: Change this option!!!
-set expandtab      " Tab is replaced by whitespaces. To insert a really tab, press C-Q<Tab> in Windows or C-V<Tab> in Linux 
+set expandtab      " Tab is replaced by whitespaces. To insert a really tab, press C-Q<Tab> in Windows or C-V<Tab> in Linux
 set autoindent
 set smartindent
 set textwidth=0
@@ -211,7 +211,7 @@ set splitbelow
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 "set langmenu=zh_CN.UTF-8
 set helplang=cn
-set guifont=YaHei\ Consolas\ Hybrid\ 12
+"set guifont=YaHei\ Consolas\ Hybrid\ 12
 "set guifont=Monaco\ 12
 "set guifont=Courier\ 10\ Pitch\ 9
 "set guifont=Monospace\ 11
@@ -237,11 +237,11 @@ set statusline+=%{&encoding},  " Encoding
 set statusline+=%{&fileformat}]  " File format
 if MySys() == 'windows'
         if filereadable(expand("$VIM/vimfiles/plugin/vimbuddy.vim"))
-	        set statusline+=\ %{VimBuddy()}          " vim buddy
+            set statusline+=\ %{VimBuddy()}          " vim buddy
         endif
 elseif MySys() == 'linux'
         if filereadable(expand("~/.vim/plugin/vimbuddy.vim"))
-	        set statusline+=\ %{VimBuddy()}          " vim buddy
+            set statusline+=\ %{VimBuddy()}          " vim buddy
         endif
 endif
 set statusline+=%=                           " Right align
@@ -250,25 +250,25 @@ set statusline+=%-14.(%l,%c%V%)\ %<%P        " Offset
 
 " Special statusbar for special windows
 if has("autocmd")
-	au FileType qf
-		\ if &buftype == "quickfix" |
-		\     setlocal statusline=%2*%-3.3n%0* |
-		\     setlocal statusline+=\ \[Compiler\ Messages\] |
-		\     setlocal statusline+=%=%2*\ %<%P |
-		\ endif
+    au FileType qf
+        \ if &buftype == "quickfix" |
+        \     setlocal statusline=%2*%-3.3n%0* |
+        \     setlocal statusline+=\ \[Compiler\ Messages\] |
+        \     setlocal statusline+=%=%2*\ %<%P |
+        \ endif
 
-	fun! <SID>FixMiniBufExplorerTitle()
-		if "-MiniBufExplorer-" == bufname("%")
-			setlocal statusline=%2*%-3.3n%0*
-			setlocal statusline+=\[Buffers\]
-		setlocal statusline+=%=%2*\ %<%P
-		endif
-	endfun
+    fun! <SID>FixMiniBufExplorerTitle()
+        if "-MiniBufExplorer-" == bufname("%")
+            setlocal statusline=%2*%-3.3n%0*
+            setlocal statusline+=\[Buffers\]
+        setlocal statusline+=%=%2*\ %<%P
+        endif
+    endfun
 
-	au BufWinEnter *
-		\ let oldwinnr=winnr() |
-		\ windo call <SID>FixMiniBufExplorerTitle() |
-		\ exec oldwinnr . " wincmd w"
+    au BufWinEnter *
+        \ let oldwinnr=winnr() |
+        \ windo call <SID>FixMiniBufExplorerTitle() |
+        \ exec oldwinnr . " wincmd w"
 endif
 
 " Cscope settings
@@ -278,17 +278,19 @@ set cscopeverbose " show msg when any other cscope db added
 
 " Themes
 if has('gui_running')
-	"colorscheme maria
-	"colorscheme oceandeep
-	colorscheme desertEx
-	"colorscheme baycomb
-	"colorscheme brookstream
-	"colorscheme inkpot
+    "colorscheme maria
+    "colorscheme oceandeep
+    "colorscheme desertEx
+    colorscheme Tomorrow-Night-Eighties
+    "colorscheme baycomb
+    "colorscheme brookstream
+    "colorscheme inkpot
 else
-	"colorscheme lucius
-	colorscheme wombat256
-	"colorscheme dawn
+    "colorscheme lucius
+    colorscheme wombat256
+    "colorscheme dawn
 endif
+
 
 "===============================================================================
 " Buffers and Windows
@@ -299,8 +301,8 @@ if has("autocmd")
 endif
 
 " close window (conflicts with the KDE setting for calling the process manager)
- noremap  <C-Esc>       :close<CR>
-inoremap  <C-Esc>  <C-C>:close<CR>
+noremap  <silent> <leader>cw       :close<CR>
+inoremap <silent> <leader>cw  <C-C>:close<CR>
 
 "===============================================================================
 " Key maps
@@ -312,7 +314,7 @@ vmap <S-Tab> <gv
 " Fast saving
 map <silent> <leader>w :w!<CR>
 
-" Autocomplete parenthesis, brachets and braces 
+" Autocomplete parenthesis, brachets and braces
 inoremap ( ()<left>
 inoremap [ []<left>
 inoremap { {}<left>
@@ -339,7 +341,7 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" Function key maps 
+" Function key maps
 vnoremap <F2> "+y
 noremap <F3> <Esc>"+p
 inoremap <F3> <Esc><Esc>"+p
@@ -348,15 +350,15 @@ inoremap <F3> <Esc><Esc>"+p
 if MySys() == 'windows'
     "let vstagpath=expand("$vim\vimfiles\tags\vstags")
     map <C-F11> :!ctags -R --c-kinds=+p --fields=+iaS --extra=+q -f "D:\Vim\vimfiles\tags\vstags"
-			    \ "D:\Microsoft Visual Studio 9.0\VC\include" "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include"<CR>
+                \ "D:\Microsoft Visual Studio 9.0\VC\include" "C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include"<CR>
     set tags+=$vim\vimfiles\tags\vstags
 elseif MySys() == 'linux'
     map <C-F11> :!ctags -R --c-kinds=+p --fields=+iaS --extra=+q -f ~/.vim/tags/commontags
-			    \ /usr/include /usr/local/include<CR>
+                \ /usr/include /usr/local/include<CR>
     set tags+=~/.vim/tags/commontags
 endif
 
-map <C-F12> :!ctags -R --c-kinds=+p --fields=+iaS --extra=+q -f ./tags ./*<CR>
+map <C-F12> :!ctags --languages=c --langmap=c:+.c:+.h -R --c-kinds=+p --fields=+iaS --extra=+q -f ./tags ./*<CR>
 set tags+=./tags
 
 noremap <silent> <F11>  <Esc>:Tlist<CR>
@@ -406,7 +408,9 @@ noremap <space> <c-f>
 
 " comma always followed by a space
 "inoremap  ,  ,<Space>
-
+map <F4> a<C-R>=strftime("%F %a %T")<CR><Esc>
+vnoremap  *  y/<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
+vnoremap  #  y?<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
 "===============================================================================
 " Replace
 "===============================================================================
@@ -429,11 +433,11 @@ iab endate <c-r>=strftime("%a %b %d %Y %T")<cr>
 "    snipMate
 "    surround.vim
 "    taglist.vim
-"    txt.vim    This is a syntax file, not a plugin. 
+"    txt.vim    This is a syntax file, not a plugin.
 "===============================================================================
 
 "---------------------------------------
-" Taglist plugin 
+" Taglist plugin
 "---------------------------------------
 "let Tlist_Ctags_Cmd = 'ctags'
 let Tlist_GainFocus_On_ToggleOpen = 1
@@ -444,9 +448,10 @@ let Tlist_File_Fold_Auto_Close = 1
 let Tlist_Exit_OnlyWindow = 1
 let Tlist_Process_File_Always = 0
 let Tlist_Inc_Winwidth = 0
+let Tlist_Ctags_Cmd='D:\ctags58\ctags.exe'
 
 "---------------------------------------
-" OmniCppComplete plugin 
+" OmniCppComplete plugin
 "---------------------------------------
 set nocp
 
@@ -475,19 +480,19 @@ function! CompleteTab()
     return "\<c-x>\<c-o>"
   endif
 endfunction
-inoremap <tab> <c-r>=CompleteTab()<cr>
+"inoremap <tab> <c-r>=CompleteTab()<cr>
 
 "---------------------------------------
 " DoxygenToolkit plugin
 "---------------------------------------
-let g:DoxygenToolkit_briefTag_pre="@Synopsis  " 
-let g:DoxygenToolkit_paramTag_pre="@Param " 
-let g:DoxygenToolkit_returnTag="@Returns   " 
+let g:DoxygenToolkit_briefTag_pre="@Synopsis  "
+let g:DoxygenToolkit_paramTag_pre="@Param "
+let g:DoxygenToolkit_returnTag="@Returns   "
 let g:DoxygenToolkit_briefTag_funcName="yes"
-let g:DoxygenToolkit_blockHeader="*******************************************************************" 
+let g:DoxygenToolkit_blockHeader="*******************************************************************"
 let g:DoxygenToolkit_blockFooter="*******************************************************************"
 let g:DoxygenToolkit_authorName="FengJie"
-let g:DoxygenToolkit_dateTag = "@date " 
+let g:DoxygenToolkit_dateTag = "@date "
 "let g:DoxygenToolkit_licenseTag =
 
 "---------------------------------------
@@ -498,22 +503,22 @@ let g:bufExplorerShowRelativePath=1
 let g:bufExplorerSortBy = "name"
 let g:bufExplorerSplitRight=0  " Split left
 "===============================================================================
-" NERD_tree 
+" NERD_tree
 "===============================================================================
-noremap <silent> <F9>  <Esc>:NERDTree<CR>
+noremap <silent> <leader><F9>  <Esc>:NERDTree<CR>
 
 "===============================================================================
-" Python 
+" Python
 "===============================================================================
 function! PythonIndent()
-	set nocindent
-	" If smarttab is set, tab at the head of a line will insert shiftwidth, other place use tabstop or softtabstop
-	set smarttab
-	set shiftwidth=4
-	" In my vim, a tab is 8 whitespace,  and back space can delete a tab(8 whitespace together)
-	set softtabstop=4  
-	set tabstop=4
-	"set expandtab
+    set nocindent
+    " If smarttab is set, tab at the head of a line will insert shiftwidth, other place use tabstop or softtabstop
+    set smarttab
+    set shiftwidth=4
+    " In my vim, a tab is 8 whitespace,  and back space can delete a tab(8 whitespace together)
+    set softtabstop=4
+    set tabstop=4
+    "set expandtab
 endfunction
 
 "au FileType python call PythonIndent()
@@ -521,6 +526,7 @@ autocmd FileType python setlocal smarttab shiftwidth=4 softtabstop=4 tabstop=4
 autocmd FileType cpp setlocal smarttab shiftwidth=4 softtabstop=4 tabstop=4
 autocmd FileType xml setlocal smarttab shiftwidth=4 softtabstop=4 tabstop=4 expandtab
 autocmd FileType java setlocal smarttab shiftwidth=4 softtabstop=4 tabstop=4 expandtab
+autocmd FileType text set syntax=txt
 
 " Pydiction plugin
 if MySys() == 'windows'
@@ -535,29 +541,36 @@ autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType python runtime! D:/Vim/vimfiles/autoload/pythoncomplete.vim
 
 "===============================================================================
-" Python 
+" Python
 "===============================================================================
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 
 "===============================================================================
-" Eclim 
+" Eclim
 "===============================================================================
 map <leader>ji :JavaImport<CR>
 
 "===============================================================================
-" Java 
+" Java
 "===============================================================================
 autocmd FileType java set omnifunc=javacomplete#Complete
 autocmd Filetype java set completefunc=javacomplete#CompleteParamsInf
 "autocmd Filetype java inoremap <buffer> . .<c-x><c-o><c-p>
 "===============================================================================
-" minibufexpl 
+" minibufexpl
 "===============================================================================
-let g:miniBufExplSplitBelow = 0
-let g:miniBufExplSplitToEdge = 0
+"let g:miniBufExplSplitBelow = 0
+"let g:miniBufExplSplitToEdge = 0
+"let g:miniBufExplorerMoreThanOne=0
 
 "===============================================================================
-" TODO 
+" vary.vim
+"===============================================================================
+let g:auto_striptrail = "python,c,cpp,java"
+"let g:auto_striptab = "python,ruby,cpp"
+
+"===============================================================================
+" TODO
 "===============================================================================
 
 "supertab
@@ -579,11 +592,11 @@ let g:EclimTaglistEnabled=0
 "    let l:line = getline(".")
 "    let l:previous_char = l:line[col(".")-1] " 取得当前光标前一个字符
 "    if l:previous_char == "("
-"	let l:back_char = ")"
+"   let l:back_char = ")"
 "    elseif l:previous_char == "["
-"	let l:back_char = "]"
+"   let l:back_char = "]"
 "    elseif l:previous_char == "{"
-"	let l:back_char = "}"
+"   let l:back_char = "}"
 "    endif
 "
 "    if index(["(", "[", "{"], l:previous_char) != -1
@@ -596,9 +609,9 @@ let g:EclimTaglistEnabled=0
 "        "  return
 "        "end
 "        if l:new_pos == l:back_char
-"	    execute "normal! v%xi"
+"       execute "normal! v%xi"
 "        else
-"	    execute "normal! i\<BS>"
+"       execute "normal! i\<BS>"
 "        endif
 "
 "        "let l:line2 = getline(".")
@@ -609,7 +622,7 @@ let g:EclimTaglistEnabled=0
 "            " 如果右括号不是当前行最后一个字符
 "        "    execute "normal! v%xi"
 "        "end
-" 
+"
 "    else
 "        execute "normal! a\<BS>"
 "    end
@@ -619,7 +632,7 @@ let g:EclimTaglistEnabled=0
 "function! RemoveNextDoubleChar(char)
 "    let l:line = getline(".")
 "    let l:next_char = l:line[col(".")] " 取得当前光标后一个字符
-" 
+"
 "    if a:char == l:next_char
 "        execute "normal! l"
 "    else
@@ -629,3 +642,32 @@ let g:EclimTaglistEnabled=0
 "inoremap ) <ESC>:call RemoveNextDoubleChar(')')<CR>a
 "inoremap ] <ESC>:call RemoveNextDoubleChar(']')<CR>a
 "inoremap } <ESC>:call RemoveNextDoubleChar('}')<CR>a
+
+" a.vim
+let g:alternateNoDefaultAlternate = 1
+
+" Airline
+let g:airline_left_sep=''
+let g:airline_right_sep=''
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline_mode_map = {
+    \ '__' : '-',
+    \ 'n'  : 'N',
+    \ 'i'  : 'I',
+    \ 'R'  : 'R',
+    \ 'c'  : 'C',
+    \ 'v'  : 'V',
+    \ 'V'  : 'V',
+    \ '' : 'V',
+    \ 's'  : 'S',
+    \ 'S'  : 'S',
+    \ '' : 'S',
+    \ }
+" Syntastic
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_auto_jump = 3

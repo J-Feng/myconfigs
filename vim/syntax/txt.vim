@@ -53,7 +53,7 @@ syn region txtCite      matchgroup=txtOperator  start="\""      end="\""        
 " ‘ ’   U+2018 (8216), U+2019 (8217)    British quotes
 " „ “   U+201E (8222), U+2019 (8217)    German quotes
 " ‹ ›   U+2039 (8249), U+203A (8250)    French quotes
-syn region txtCite      matchgroup=txtOperator  start="[‚„«‘„‹]"        end="[’”»’“›]"  contains=@txtContains,@txtAlwaysContains
+"syn region txtCite      matchgroup=txtOperator  start="[‚„«‘„‹]"        end="[’”»’“›]"  contains=@txtContains,@txtAlwaysContains
 
 syn region txtCite      matchgroup=txtOperator  start="\(\s\|^\)\@<='"  end="'"         contains=@txtContains,@txtAlwaysContains
 
