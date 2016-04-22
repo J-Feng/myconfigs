@@ -131,8 +131,6 @@ set nocompatible
 filetype  plugin on
 filetype  indent on
 syntax on
-" Pathogen
-call pathogen#infect()
 
 " A map leader
 let mapleader = ","
@@ -645,6 +643,9 @@ let g:EclimTaglistEnabled=0
 
 " a.vim
 let g:alternateNoDefaultAlternate = 1
+
+" c.vim
+let g:C_Ctrl_j = 'off'
 
 " Airline
 let g:airline_left_sep=''
